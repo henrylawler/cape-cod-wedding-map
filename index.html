@@ -594,6 +594,21 @@
       background: #4b5963;
     }
 
+    .map-label {
+      border: 1px solid rgba(28, 37, 34, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 251, 0.94);
+      color: var(--ink);
+      box-shadow: 0 5px 14px rgba(25, 34, 30, 0.14);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 7px;
+    }
+
+    .map-label::before {
+      display: none;
+    }
+
     .leaflet-popup-content-wrapper {
       border-radius: var(--radius);
     }
@@ -768,6 +783,7 @@
             <strong>Use Saturday for Nantucket and Sunday for the scenic return.</strong>
             Keep the island day walkable, eat well near the wharf, then decide Sunday morning whether to do the easy Sandwich/Woods Hole route or the full Outer Cape run to Provincetown and Race Point.
           </div>
+          <p class="muted" style="margin-top: 10px;">On the map, the named labels are the actual route stops. The route cards below show the drive time for each leg and link directly into Google Maps.</p>
           <div class="airport-row">
             <div>
               <h3>Flight frame</h3>
@@ -812,7 +828,7 @@
               <ul>
                 <li>Coolest scenery: dunes, Race Point, Commercial Street.</li>
                 <li>Best as a morning-start route with lunch or drinks in Provincetown.</li>
-                <li>About 5h10 total drive time before stops across the full Mashpee -> P-town -> Boston loop.</li>
+                <li>For a shorter dunes hit, use Wellfleet / Marconi and turn back toward Boston.</li>
               </ul>
             </div>
           </div>
@@ -1011,7 +1027,21 @@
               </div>
             </div>
             <div class="route-card">
-              <h3>Sunday Outer Cape route</h3>
+              <h3>Sunday dunes sampler</h3>
+              <p class="muted">This is the "get the dune/ocean feeling and turn back" version. It does not require going all the way to Race Point.</p>
+              <div class="time-grid">
+                <strong>Mashpee -> Marconi / Wellfleet dunes</strong><span>~1h20</span>
+                <strong>Wellfleet -> Boston</strong><span>~2h15</span>
+                <strong>Total drive</strong><span>~3h30 before stops</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Mashpee,+MA&destination=Marconi+Beach,+Wellfleet,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>Mashpee -> Marconi</a>
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Marconi+Beach,+Wellfleet,+MA&destination=Boston+Seaport,+Boston,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>Marconi -> Boston</a>
+              </div>
+            </div>
+            <div class="route-card">
+              <h3>Sunday full Outer Cape route</h3>
+              <p class="muted">This is the end-of-Cape version: Provincetown, Commercial Street, Race Point, then back toward Boston.</p>
               <div class="time-grid">
                 <strong>Mashpee -> Provincetown</strong><span>~1h40</span>
                 <strong>Provincetown -> Race Point</strong><span>~15 min</span>
@@ -1097,6 +1127,7 @@
             <li><a href="https://www.straightwharffish.com/" target="_blank" rel="noreferrer">Straight Wharf Fish</a>, <a href="https://www.whiteelephantnantucket.com/dining/brant-point-grill" target="_blank" rel="noreferrer">Brant Point Grill</a>, and <a href="https://www.lemonpressnantucket.com/location/lemon-press/" target="_blank" rel="noreferrer">Lemon Press</a> for Nantucket food timing.</li>
             <li><a href="https://thecoffeebah.com/" target="_blank" rel="noreferrer">Coffee Bah</a>, <a href="https://capecodcoffee.com/" target="_blank" rel="noreferrer">Cape Cod Coffee</a>, <a href="https://www.piecoffee.com/" target="_blank" rel="noreferrer">Pie in the Sky</a>, <a href="https://www.dailyprovisions.co/location/seaport/" target="_blank" rel="noreferrer">Daily Provisions</a>, and <a href="https://gracenotecoffee.com/pages/locations" target="_blank" rel="noreferrer">Gracenote Coffee</a> for coffee/breakfast stops.</li>
             <li><a href="https://www.mass.gov/locations/south-cape-beach-state-park" target="_blank" rel="noreferrer">South Cape Beach</a>, <a href="https://www.savebuzzardsbay.org/places-to-go/the-knob" target="_blank" rel="noreferrer">The Knob</a>, <a href="https://www.nps.gov/places/race-point-beach.htm" target="_blank" rel="noreferrer">Race Point Beach</a>, and <a href="https://www.nps.gov/caco/learn/historyculture/dune-shacks-of-peaked-hill-bars-historic-district.htm" target="_blank" rel="noreferrer">Dune Shacks</a> for scenic context.</li>
+            <li><a href="https://www.nps.gov/places/marconi-beach.htm" target="_blank" rel="noreferrer">Marconi Beach</a> and <a href="https://www.nps.gov/places/marconi-station-site.htm" target="_blank" rel="noreferrer">Marconi Station Site</a> for the shorter Wellfleet dunes option.</li>
             <li><a href="https://www.fvcapecod.com/infospring25" target="_blank" rel="noreferrer">Fishermen's View</a>, <a href="https://treehousebrew.com/visiting-sandwich" target="_blank" rel="noreferrer">Tree House Sandwich</a>, and <a href="https://www.naukabout.com/brewery" target="_blank" rel="noreferrer">Naukabout Brewery</a> for Cape food/drink stops.</li>
             <li><a href="https://www.bostonharbornow.org/what-we-do/explore/harborwalk/" target="_blank" rel="noreferrer">Boston Harborwalk</a>, <a href="https://www.icaboston.org/" target="_blank" rel="noreferrer">ICA Boston</a>, <a href="https://www.gardnermuseum.org/visit" target="_blank" rel="noreferrer">Gardner Museum</a>, and <a href="https://content.boston.gov/parks/public-garden" target="_blank" rel="noreferrer">Boston Public Garden</a> for Sunday afternoon Boston options.</li>
             <li>Highlight photos are linked to Wikimedia Commons source/category pages from each image card.</li>
@@ -1122,7 +1153,8 @@
           name: "Boston Logan International Airport",
           coords: [42.3656, -71.0096],
           kind: "airport",
-          note: "Assumed arrival and Monday departure airport."
+          note: "Assumed arrival and Monday departure airport.",
+          showLabel: true
         },
         pvd: {
           label: "PVD",
@@ -1143,14 +1175,16 @@
           name: "Hyannis Harbor area",
           coords: [41.6497, -70.2806],
           kind: "cape",
-          note: "Ferry, parking, and harbor food options. About 25 minutes from Mashpee."
+          note: "Ferry, parking, and harbor food options. About 25 minutes from Mashpee.",
+          showLabel: true
         },
         hyline: {
           label: "HL",
           name: "Hy-Line Cruises terminal",
           coords: [41.6492, -70.2810],
           kind: "ferry",
-          note: "220 Ocean Street. High-speed Nantucket ferry."
+          note: "220 Ocean Street. High-speed Nantucket ferry.",
+          showLabel: true
         },
         steamship: {
           label: "SS",
@@ -1164,7 +1198,8 @@
           name: "Mashpee venue area",
           coords: [41.6176, -70.4912],
           kind: "event",
-          note: "Exact rehearsal/wedding venue address needs confirmation."
+          note: "Exact rehearsal/wedding venue address needs confirmation.",
+          showLabel: true
         },
         nantucketWharf: {
           label: "NT",
@@ -1206,28 +1241,40 @@
           name: "Woods Hole / Nobska",
           coords: [41.5265, -70.6711],
           kind: "cape",
-          note: "Best short scenic drive from Mashpee."
+          note: "Best short scenic drive from Mashpee.",
+          showLabel: true
         },
         sandwich: {
           label: "S",
           name: "Sandwich Boardwalk / Canal stop",
           coords: [41.7587, -70.4949],
           kind: "cape",
-          note: "Low-friction Sunday stop with boardwalk, canal, Fishermen's View, and Tree House nearby."
+          note: "Low-friction Sunday stop with boardwalk, canal, Fishermen's View, and Tree House nearby.",
+          showLabel: true
+        },
+        marconi: {
+          label: "WF",
+          name: "Wellfleet / Marconi dunes",
+          coords: [41.8930, -69.9744],
+          kind: "cape",
+          note: "Shorter Outer Cape dunes option: ocean beach, high bluffs, then turn back toward Boston.",
+          showLabel: true
         },
         provincetown: {
           label: "PT",
           name: "Provincetown",
           coords: [42.0521, -70.1847],
           kind: "cape",
-          note: "Outer Cape town, Commercial Street, dune access, and the full end-of-Cape story."
+          note: "Outer Cape town, Commercial Street, dune access, and the full end-of-Cape story.",
+          showLabel: true
         },
         racePoint: {
           label: "RP",
           name: "Race Point Beach",
           coords: [42.0797, -70.2433],
           kind: "cape",
-          note: "Northern tip of Cape Cod with big Atlantic beach and dune views."
+          note: "Northern tip of Cape Cod with big Atlantic beach and dune views.",
+          showLabel: true
         },
         dailyProvisions: {
           label: "DP",
@@ -1262,7 +1309,8 @@
           name: "Boston Seaport / Harborwalk",
           coords: [42.3496, -71.0428],
           kind: "boston",
-          note: "Waterfront walk, Fan Pier, ICA, coffee, and easy pre-dinner time."
+          note: "Waterfront walk, Fan Pier, ICA, coffee, and easy pre-dinner time.",
+          showLabel: true
         }
       };
 
@@ -1507,6 +1555,7 @@
           locations.knob,
           locations.woodsHole,
           locations.sandwich,
+          locations.marconi,
           locations.provincetown,
           locations.racePoint,
           locations.nantucketWharf,
@@ -1546,12 +1595,21 @@
           const marker = L.marker(loc.coords, { icon: markerIcon(loc) })
             .addTo(map)
             .bindPopup(popup(loc));
+          if (loc.showLabel) {
+            marker.bindTooltip(loc.name, {
+              permanent: true,
+              direction: "right",
+              offset: [18, 0],
+              className: "map-label"
+            });
+          }
           markers.push(marker);
         });
 
         addRoute([activeAirport().coords, locations.sandwich.coords, locations.mashpee.coords], "#486f96");
         addRoute([locations.mashpee.coords, locations.hyline.coords], "#b78219", "5 6");
         addRoute([locations.mashpee.coords, locations.woodsHole.coords, locations.sandwich.coords, locations.bostonHotel.coords], "#24766d");
+        addRoute([locations.mashpee.coords, locations.marconi.coords, locations.bostonHotel.coords], "#c8583d", "3 8");
         addRoute([locations.mashpee.coords, locations.provincetown.coords, locations.racePoint.coords, locations.bostonHotel.coords], "#c8583d", "6 7");
         addRoute([locations.bostonHotel.coords, locations.gardner.coords, locations.publicGarden.coords], "#4b5963", "5 8");
         addLine(ferryCurve(locations.hyline.coords, locations.nantucketWharf.coords), "#b78219", "8 8");
