@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cape Cod Wedding Trip Map</title>
+  <link rel="preconnect" href="https://tile.openstreetmap.org">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {
+      --bg: #f6f7f2;
+      --panel: #ffffff;
+      --ink: #1c2522;
+      --muted: #59645f;
+      --line: #d7ddd4;
+      --soft: #edf2ef;
+      --teal: #24766d;
+      --teal-dark: #15514b;
+      --coral: #c8583d;
+      --gold: #b78219;
+      --blue: #486f96;
+      --shadow: 0 14px 38px rgba(25, 34, 30, 0.14);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--teal-dark);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px 20px;
+      background: #fffffb;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .kicker {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 22px;
+      line-height: 1.1;
+      margin-top: 3px;
+    }
+
+    h2 {
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .icon-button,
+    .seg-button,
+    .route-button,
+    .link-button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: var(--radius);
+      min-height: 38px;
+      padding: 8px 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+    }
+
+    .icon-button svg,
+    .seg-button svg,
+    .route-button svg,
+    .link-button svg {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 auto;
+    }
+
+    .icon-button:hover,
+    .seg-button:hover,
+    .route-button:hover,
+    .link-button:hover {
+      border-color: #aeb9b0;
+      background: #f9fbf8;
+    }
+
+    .icon-button.primary,
+    .seg-button.active,
+    .route-button.active {
+      background: var(--teal-dark);
+      border-color: var(--teal-dark);
+      color: #ffffff;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: minmax(540px, 1.35fr) minmax(390px, 0.65fr);
+      gap: 16px;
+      padding: 16px;
+      min-height: 0;
+      align-items: start;
+    }
+
+    .map-shell {
+      position: relative;
+      position: sticky;
+      top: 92px;
+      height: calc(100vh - 124px);
+      min-height: 620px;
+      background: #dce4de;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .map-fallback {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 30px;
+      text-align: center;
+      color: var(--muted);
+      background: repeating-linear-gradient(45deg, #edf2ef, #edf2ef 12px, #e3ebe5 12px, #e3ebe5 24px);
+    }
+
+    .map-tools {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      z-index: 600;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: calc(100% - 24px);
+    }
+
+    .route-button {
+      min-height: 34px;
+      padding: 7px 9px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      font-size: 13px;
+    }
+
+    .legend {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      z-index: 600;
+      width: min(280px, calc(100% - 24px));
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: 0 8px 22px rgba(25, 34, 30, 0.12);
+      backdrop-filter: blur(8px);
+    }
+
+    .legend-row {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 8px;
+      align-items: start;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .swatch {
+      width: 18px;
+      height: 4px;
+      border-radius: 999px;
+      margin-top: 8px;
+    }
+
+    .side {
+      min-height: 0;
+      max-height: calc(100vh - 124px);
+      overflow: auto;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 8px 22px rgba(25, 34, 30, 0.08);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .callout {
+      border-left: 4px solid var(--teal);
+      background: #f0f7f5;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 12px;
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .seg-button {
+      min-width: 0;
+      text-align: left;
+      justify-content: flex-start;
+      min-height: 44px;
+    }
+
+    .seg-button span {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .airport-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .select-wrap {
+      position: relative;
+      min-width: 145px;
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 8px 34px 8px 10px;
+      color: var(--ink);
+      background: #fff;
+      appearance: none;
+    }
+
+    .select-wrap svg {
+      position: absolute;
+      pointer-events: none;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      width: 16px;
+      height: 16px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 9px;
+    }
+
+    .day-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffffb;
+      padding: 11px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .day-card.active {
+      border-color: var(--teal);
+      box-shadow: inset 0 0 0 1px var(--teal);
+    }
+
+    .day-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .date-pill {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .day-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+    }
+
+    .day-list li {
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 8px;
+    }
+
+    .time {
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .links-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .link-button {
+      min-height: 34px;
+      padding: 7px 9px;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .option {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 11px;
+      background: #fffffb;
+      display: grid;
+      gap: 8px;
+    }
+
+    .option.recommended {
+      border-color: var(--teal);
+      background: #f2faf7;
+    }
+
+    .option ul,
+    .source-list,
+    .questions {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .option li,
+    .source-list li,
+    .questions li {
+      margin-top: 5px;
+    }
+
+    .ferry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .ferry-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 11px;
+      background: #fffffb;
+      display: grid;
+      gap: 8px;
+    }
+
+    .time-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 5px 9px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      width: fit-content;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .marker {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    }
+
+    .marker.airport {
+      background: var(--blue);
+    }
+
+    .marker.cape {
+      background: var(--teal);
+    }
+
+    .marker.event {
+      background: var(--coral);
+    }
+
+    .marker.ferry {
+      background: var(--gold);
+    }
+
+    .marker.boston {
+      background: #4b5963;
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: var(--radius);
+    }
+
+    .popup-title {
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .popup-meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1060px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+
+      .map-shell,
+      #map {
+        position: relative;
+        top: auto;
+        height: 58vh;
+        min-height: 58vh;
+      }
+
+      .side {
+        max-height: none;
+        overflow: visible;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .top-actions > * {
+        flex: 1 1 150px;
+      }
+
+      .main {
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .map-shell,
+      #map {
+        height: 54vh;
+        min-height: 54vh;
+      }
+
+      .legend {
+        position: static;
+        width: auto;
+        margin: 10px;
+      }
+
+      .map-tools {
+        position: static;
+        padding: 0 10px 10px;
+        background: #dce4de;
+      }
+
+      .route-button {
+        flex: 1 1 130px;
+      }
+
+      .segmented,
+      .decision-grid,
+      .ferry-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .airport-row {
+        display: grid;
+      }
+
+      .select-wrap {
+        min-width: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="kicker">Cape Cod wedding trip</div>
+        <h1>Kellee &amp; Austin - June 11-15, 2026</h1>
+      </div>
+      <div class="top-actions">
+        <a class="icon-button primary" href="https://www.zola.com/wedding/austinandkellee/travel" target="_blank" rel="noreferrer">
+          <i data-lucide="external-link"></i>
+          Zola travel
+        </a>
+        <a class="icon-button" href="https://hylinecruises.com/nantucket-ferry/" target="_blank" rel="noreferrer">
+          <i data-lucide="ship"></i>
+          Hy-Line ferry
+        </a>
+        <a class="icon-button" href="https://www.steamshipauthority.com/schedules" target="_blank" rel="noreferrer">
+          <i data-lucide="anchor"></i>
+          Steamship
+        </a>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="map-shell" aria-label="Trip map">
+        <div id="map" aria-hidden="false"></div>
+        <div id="map-fallback" class="map-fallback">
+          <div>
+            <h2>Map assets are loading from OpenStreetMap.</h2>
+            <p>Use the itinerary and links on the right if the map tiles are blocked.</p>
+          </div>
+        </div>
+        <div class="legend" aria-label="Map legend">
+          <h2>Spatial read</h2>
+          <div class="legend-row">
+            <span class="swatch" style="background: var(--blue);"></span>
+            <span>Airport and rental car start/end near Boston Logan by default.</span>
+          </div>
+          <div class="legend-row">
+            <span class="swatch" style="background: var(--teal);"></span>
+            <span>Hyannis is the ferry base. Mashpee is close enough for a clean Saturday ferry day.</span>
+          </div>
+          <div class="legend-row">
+            <span class="swatch" style="background: var(--coral);"></span>
+            <span>Mashpee is southwest of Hyannis. Exact venue address still needs confirmation.</span>
+          </div>
+          <div class="legend-row">
+            <span class="swatch" style="background: var(--gold);"></span>
+            <span>Nantucket is offshore. Plan it as passenger ferry plus walking/shuttle, not rental car.</span>
+          </div>
+        </div>
+        <div class="map-tools" aria-label="Map focus controls">
+          <button class="route-button active" type="button" data-focus="all">
+            <i data-lucide="route"></i>
+            Whole trip
+          </button>
+          <button class="route-button" type="button" data-focus="cape">
+            <i data-lucide="map-pin"></i>
+            Cape base
+          </button>
+          <button class="route-button" type="button" data-focus="nantucket">
+            <i data-lucide="ship"></i>
+            Nantucket
+          </button>
+          <button class="route-button" type="button" data-focus="boston">
+            <i data-lucide="plane"></i>
+            Boston exit
+          </button>
+        </div>
+      </section>
+
+      <aside class="side" aria-label="Itinerary planning panel">
+        <section class="section">
+          <div class="section-header">
+            <h2>Recommendation</h2>
+            <span class="badge"><i data-lucide="check"></i> Default plan</span>
+          </div>
+          <div class="callout" id="recommendation">
+            <strong>Use Saturday for Nantucket and Sunday for the scenic return.</strong>
+            Keep the island day walkable, eat well near the wharf, then decide Sunday morning whether to do the easy Sandwich/Woods Hole route or the full Outer Cape run to Provincetown and Race Point.
+          </div>
+          <div class="airport-row">
+            <div>
+              <h3>Flight frame</h3>
+              <p class="muted" id="airport-copy">ATL -> BOS Thursday morning; BOS -> ATL Monday 6:50-9:33am.</p>
+            </div>
+            <div class="select-wrap">
+              <select id="airport-select" aria-label="Choose arrival airport">
+                <option value="bos">BOS - Boston Logan</option>
+                <option value="pvd">PVD - Providence</option>
+                <option value="hya">HYA - Cape Cod Gateway</option>
+              </select>
+              <i data-lucide="chevron-down"></i>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Sunday route choice</h2>
+          </div>
+          <div class="segmented" role="group" aria-label="Sunday route scenario">
+            <button class="seg-button active" type="button" data-plan="hyannis">
+              <i data-lucide="waves"></i>
+              <span>Easy scenic</span>
+            </button>
+            <button class="seg-button" type="button" data-plan="nantucket">
+              <i data-lucide="route"></i>
+              <span>Outer Cape</span>
+            </button>
+          </div>
+          <div class="decision-grid" style="margin-top: 12px;">
+            <div class="option recommended" id="hyannis-option">
+              <h3>Balanced Sunday</h3>
+              <ul>
+                <li>South Cape Beach or The Knob in the morning.</li>
+                <li>Sandwich Boardwalk, Fishermen's View, or Tree House on the way back.</li>
+                <li>Clean arrival in Boston before dinner.</li>
+              </ul>
+            </div>
+            <div class="option" id="nantucket-option">
+              <h3>Provincetown / Race Point</h3>
+              <ul>
+                <li>Coolest scenery: dunes, Race Point, Commercial Street.</li>
+                <li>Worth it only if you leave Mashpee before lunch.</li>
+                <li>Long return to Boston, especially with Sunday traffic.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Walkthrough itinerary</h2>
+            <span class="badge" id="plan-badge">Easy scenic</span>
+          </div>
+          <div id="timeline" class="timeline"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Nantucket ferry picks</h2>
+            <span class="badge">Sat Jun 13</span>
+          </div>
+          <div class="ferry-grid">
+            <div class="ferry-box">
+              <h3>Best fit: Hy-Line</h3>
+              <div class="time-grid">
+                <strong>Out</strong><span>11:20 -> 12:20 booked target</span>
+                <strong>Back</strong><span>About 7:00p return; expect Mashpee around 8:30p after docking and the drive back</span>
+                <strong>Why</strong><span>One-hour crossing, frequent summer schedule, and 220 Ocean Street is the easiest Hyannis ferry terminal.</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://hylinecruises.com/nantucket-ferry/" target="_blank" rel="noreferrer">
+                  <i data-lucide="ticket"></i>
+                  Book/check
+                </a>
+                <a class="link-button" href="https://www.hylinecruises.com/parking/" target="_blank" rel="noreferrer">
+                  <i data-lucide="parking-circle"></i>
+                  Parking
+                </a>
+              </div>
+            </div>
+            <div class="ferry-box">
+              <h3>Backup: Steamship fast ferry</h3>
+              <div class="time-grid">
+                <strong>Out</strong><span>8:15, 11:00, 2:00, 5:00, 7:30</span>
+                <strong>Back</strong><span>3:30, 6:15, 8:45</span>
+                <strong>Why</strong><span>Also one-hour passenger service from Hyannis. Useful if Hy-Line timing or availability is bad.</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.steamshipauthority.com/schedules" target="_blank" rel="noreferrer">
+                  <i data-lucide="calendar-days"></i>
+                  Schedule
+                </a>
+                <a class="link-button" href="https://www.steamshipauthority.com/traveling_today" target="_blank" rel="noreferrer">
+                  <i data-lucide="map"></i>
+                  Terminal
+                </a>
+              </div>
+            </div>
+          </div>
+          <p class="muted" style="margin-top: 10px;">Arrive 45 minutes early if you need parking or ticketing. Leave the rental car in Hyannis; treat Nantucket as walking, shuttle, or short rideshare.</p>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Scenes, eats, drinks</h2>
+          </div>
+          <div class="decision-grid">
+            <div class="option recommended">
+              <h3>Nantucket Saturday</h3>
+              <ul>
+                <li>Straight Wharf Fish is the best low-friction lunch near the ferry.</li>
+                <li>Brant Point Grill is the nicer harbor-view lunch if you reserve.</li>
+                <li>Cisco Brewers is the easy afternoon scene; use shuttle or rideshare.</li>
+              </ul>
+              <a class="link-button" href="https://www.straightwharffish.com/" target="_blank" rel="noreferrer">
+                <i data-lucide="external-link"></i>
+                Straight Wharf
+              </a>
+            </div>
+            <div class="option">
+              <h3>Cape downtime</h3>
+              <ul>
+                <li>South Cape Beach is the easiest real view from Mashpee.</li>
+                <li>Popponesset Raw Bar is the casual lobster-roll stop.</li>
+                <li>Naukabout is the closest beer/patio option.</li>
+              </ul>
+              <a class="link-button" href="https://www.naukabout.com/brewery" target="_blank" rel="noreferrer">
+                <i data-lucide="external-link"></i>
+                Naukabout
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Drive notes</h2>
+          </div>
+          <div class="time-grid">
+            <strong>BOS -> Mashpee</strong><span>About 1h40 direct before traffic.</span>
+            <strong>Mashpee -> Hyannis ferry</strong><span>About 25 minutes; give more buffer for parking.</span>
+            <strong>Mashpee -> Woods Hole</strong><span>About 30 minutes; best short scenic detour.</span>
+            <strong>Mashpee -> Provincetown</strong><span>About 1h40 before traffic; only do it Sunday if leaving early.</span>
+            <strong>Provincetown -> Boston</strong><span>About 2h45 before Sunday traffic.</span>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Open questions</h2>
+          </div>
+          <ul class="questions">
+            <li>Confirm exact rehearsal and wedding venue address in Mashpee.</li>
+            <li>Pick Saturday Nantucket lunch: Straight Wharf Fish for easy, Brant Point Grill for nicer.</li>
+            <li>Decide Sunday morning: easy scenic return or full Outer Cape/Race Point run.</li>
+            <li>Check weather before committing to Race Point, dunes, beach walks, or patio stops.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Sources</h2>
+          </div>
+          <ul class="source-list">
+            <li><a href="https://www.zola.com/wedding/austinandkellee" target="_blank" rel="noreferrer">Zola home page</a> for wedding date and Mashpee location.</li>
+            <li><a href="https://www.zola.com/wedding/austinandkellee/travel" target="_blank" rel="noreferrer">Zola travel page</a> for hotel blocks, Hyannis addresses, airport guidance, and the 15-minute venue note.</li>
+            <li><a href="https://hylinecruises.com/nantucket-ferry/" target="_blank" rel="noreferrer">Hy-Line Nantucket ferry</a> and <a href="https://hylinecruises.com/wp-content/uploads/2026/02/Nantucket-v2.pdf" target="_blank" rel="noreferrer">2026 schedule PDF</a> for ferry timing.</li>
+            <li><a href="https://www.steamshipauthority.com/schedules" target="_blank" rel="noreferrer">Steamship Authority schedules</a> for high-speed passenger backup.</li>
+            <li><a href="https://www.hylinecruises.com/parking/" target="_blank" rel="noreferrer">Hy-Line parking</a> for 220 Ocean Street and arrival/parking guidance.</li>
+            <li><a href="https://www.ciscobrewers.com/nantucket" target="_blank" rel="noreferrer">Cisco Brewers Nantucket</a> for Saturday/Sunday shuttle and island stop option.</li>
+            <li><a href="https://www.straightwharffish.com/" target="_blank" rel="noreferrer">Straight Wharf Fish</a>, <a href="https://www.whiteelephantnantucket.com/dining/brant-point-grill" target="_blank" rel="noreferrer">Brant Point Grill</a>, and <a href="https://www.lemonpressnantucket.com/location/lemon-press/" target="_blank" rel="noreferrer">Lemon Press</a> for Nantucket food timing.</li>
+            <li><a href="https://www.mass.gov/locations/south-cape-beach-state-park" target="_blank" rel="noreferrer">South Cape Beach</a>, <a href="https://www.savebuzzardsbay.org/places-to-go/the-knob" target="_blank" rel="noreferrer">The Knob</a>, and <a href="https://www.nps.gov/places/race-point-beach.htm" target="_blank" rel="noreferrer">Race Point Beach</a> for scenic stops.</li>
+            <li><a href="https://www.fvcapecod.com/infospring25" target="_blank" rel="noreferrer">Fishermen's View</a>, <a href="https://treehousebrew.com/visiting-sandwich" target="_blank" rel="noreferrer">Tree House Sandwich</a>, and <a href="https://www.naukabout.com/brewery" target="_blank" rel="noreferrer">Naukabout Brewery</a> for Cape food/drink stops.</li>
+          </ul>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.js"></script>
+  <script>
+    (function () {
+      const state = {
+        plan: "hyannis",
+        airport: "bos",
+        focus: "all"
+      };
+
+      const locations = {
+        bos: {
+          label: "BOS",
+          name: "Boston Logan International Airport",
+          coords: [42.3656, -71.0096],
+          kind: "airport",
+          note: "Assumed arrival and Monday departure airport."
+        },
+        pvd: {
+          label: "PVD",
+          name: "T.F. Green International Airport",
+          coords: [41.7240, -71.4282],
+          kind: "airport",
+          note: "Providence reference only. Actual flights are BOS."
+        },
+        hya: {
+          label: "HYA",
+          name: "Cape Cod Gateway Airport",
+          coords: [41.6693, -70.2804],
+          kind: "airport",
+          note: "Closest airport, directly in Hyannis."
+        },
+        hyannisHotel: {
+          label: "HY",
+          name: "Hyannis Harbor area",
+          coords: [41.6497, -70.2806],
+          kind: "cape",
+          note: "Ferry, parking, and harbor food options. About 25 minutes from Mashpee before traffic."
+        },
+        hyline: {
+          label: "HL",
+          name: "Hy-Line Cruises terminal",
+          coords: [41.6492, -70.2810],
+          kind: "ferry",
+          note: "220 Ocean Street. High-speed Nantucket ferry."
+        },
+        steamship: {
+          label: "SS",
+          name: "Steamship Authority Hyannis",
+          coords: [41.6500, -70.2772],
+          kind: "ferry",
+          note: "69 South Street. Backup fast ferry and vehicle ferry operator."
+        },
+        mashpee: {
+          label: "M",
+          name: "Mashpee venue area",
+          coords: [41.6176, -70.4912],
+          kind: "event",
+          note: "Exact rehearsal/wedding venue address needs confirmation."
+        },
+        nantucketWharf: {
+          label: "NT",
+          name: "Nantucket ferry wharves",
+          coords: [41.2855, -70.0964],
+          kind: "ferry",
+          note: "Arrive in Nantucket Town by passenger ferry."
+        },
+        brantPoint: {
+          label: "BP",
+          name: "Brant Point Lighthouse",
+          coords: [41.2899, -70.0906],
+          kind: "ferry",
+          note: "Easy scenic walk near the harbor."
+        },
+        cisco: {
+          label: "CB",
+          name: "Cisco Brewers",
+          coords: [41.2609, -70.1364],
+          kind: "ferry",
+          note: "Optional shuttle/Uber stop if you want a relaxed island afternoon."
+        },
+        southCape: {
+          label: "SC",
+          name: "South Cape Beach",
+          coords: [41.5526, -70.4998],
+          kind: "cape",
+          note: "Easiest real beach/view from Mashpee."
+        },
+        knob: {
+          label: "K",
+          name: "The Knob / Quissett Harbor",
+          coords: [41.5448, -70.6558],
+          kind: "cape",
+          note: "Short walk with high view payoff near Woods Hole."
+        },
+        woodsHole: {
+          label: "WH",
+          name: "Woods Hole / Nobska",
+          coords: [41.5265, -70.6711],
+          kind: "cape",
+          note: "Best short scenic drive from Mashpee."
+        },
+        sandwich: {
+          label: "S",
+          name: "Sandwich Boardwalk / Canal stop",
+          coords: [41.7587, -70.4949],
+          kind: "cape",
+          note: "Low-friction Sunday stop with boardwalk, canal, Fishermen's View, and Tree House nearby."
+        },
+        provincetown: {
+          label: "PT",
+          name: "Provincetown",
+          coords: [42.0521, -70.1847],
+          kind: "cape",
+          note: "Outer Cape town, Commercial Street, dune access, and the full end-of-Cape story."
+        },
+        racePoint: {
+          label: "RP",
+          name: "Race Point Beach",
+          coords: [42.0797, -70.2433],
+          kind: "cape",
+          note: "Northern tip of Cape Cod. Destination/view, not a place for speed."
+        },
+        bostonHotel: {
+          label: "B",
+          name: "Boston dinner / exit zone",
+          coords: [42.3663, -71.0217],
+          kind: "boston",
+          note: "Sunday dinner is covered in Boston. Monday flight is early from BOS."
+        }
+      };
+
+      const airportCopy = {
+        bos: "ATL -> BOS Thursday morning; BOS -> ATL Monday 6:50-9:33am.",
+        pvd: "PVD can work for arrival, but the actual flights are BOS.",
+        hya: "HYA lands you directly in Hyannis, but rental availability and flight options are usually thinner."
+      };
+
+      const airportMapOrigins = {
+        bos: "Boston+Logan+International+Airport",
+        pvd: "T.F.+Green+International+Airport",
+        hya: "Cape+Cod+Gateway+Airport"
+      };
+
+      const timelinePlans = {
+        hyannis: [
+          {
+            key: "thu",
+            date: "Thu Jun 11",
+            title: "Arrival, rental car, rehearsal",
+            focus: "cape",
+            items: [
+              ["7:10a", "ATL departure."],
+              ["Morning", "Land BOS, pick up rental car, and drive toward Mashpee."],
+              ["Scenic option", "Route through Sandwich or Woods Hole if there is enough slack before rehearsal dinner."],
+              ["Evening", "Rehearsal dinner is covered."]
+            ],
+            links: [
+              ["Airport -> Mashpee", "https://www.google.com/maps/dir/?api=1&origin=Boston+Logan+International+Airport&destination=Mashpee,+MA"],
+              ["Sandwich detour", "https://www.google.com/maps/dir/?api=1&origin=Boston+Logan+International+Airport&destination=Sandwich+Boardwalk,+Sandwich,+MA"]
+            ]
+          },
+          {
+            key: "fri",
+            date: "Fri Jun 12",
+            title: "Wedding day in Mashpee",
+            focus: "cape",
+            items: [
+              ["Morning", "Keep it local: South Cape Beach, Popponesset Raw Bar, or Naukabout."],
+              ["Midday", "Avoid ambitious driving before wedding logistics."],
+              ["Wedding", "Wedding and dinner are covered."]
+            ],
+            links: [
+              ["South Cape Beach", "https://www.google.com/maps/search/?api=1&query=South+Cape+Beach+State+Park"],
+              ["Naukabout", "https://www.google.com/maps/search/?api=1&query=Naukabout+Brewery,+Mashpee,+MA"]
+            ]
+          },
+          {
+            key: "sat",
+            date: "Sat Jun 13",
+            title: "Nantucket day trip",
+            focus: "nantucket",
+            items: [
+              ["10:30a", "Target Hyannis ferry area for parking and boarding buffer."],
+              ["11:20a", "Hy-Line ferry to Nantucket; arrive around 12:20."],
+              ["Lunch", "Straight Wharf Fish for easy, Brant Point Grill for nicer harbor-view lunch."],
+              ["Afternoon", "Nantucket Town, Brant Point, optional Cisco shuttle/rideshare."],
+              ["7:00p", "Return ferry; expect Mashpee around 8:30 after docking and drive back."]
+            ],
+            links: [
+              ["Book Hy-Line", "https://hylinecruises.com/nantucket-ferry/"],
+              ["Straight Wharf Fish", "https://www.google.com/maps/search/?api=1&query=Straight+Wharf+Fish,+Nantucket,+MA"],
+              ["Cisco Brewers", "https://www.google.com/maps/search/?api=1&query=Cisco+Brewers,+5+Bartlett+Farm+Rd,+Nantucket,+MA"]
+            ]
+          },
+          {
+            key: "sun",
+            date: "Sun Jun 14",
+            title: "Easy scenic return to Boston",
+            focus: "boston",
+            items: [
+              ["Morning", "South Cape Beach, The Knob, or Woods Hole if the weather is good."],
+              ["Lunch", "Sandwich Boardwalk + Fishermen's View or Tree House Sandwich."],
+              ["Afternoon", "Drive to Boston with bridge and Sunday traffic cushion."],
+              ["Dinner", "Boston dinner is covered."]
+            ],
+            links: [
+              ["The Knob", "https://www.google.com/maps/search/?api=1&query=The+Knob,+Falmouth,+MA"],
+              ["Sandwich route", "https://www.google.com/maps/dir/?api=1&origin=Mashpee,+MA&destination=Sandwich+Boardwalk,+Sandwich,+MA"]
+            ]
+          },
+          {
+            key: "mon",
+            date: "Mon Jun 15",
+            title: "6am airport return",
+            focus: "boston",
+            items: [
+              ["Early", "Airport logistics."],
+              ["6:50a", "BOS departure."],
+              ["9:33a", "ATL arrival."]
+            ],
+            links: [
+              ["Logan airport", "https://www.google.com/maps/search/?api=1&query=Boston+Logan+International+Airport"]
+            ]
+          }
+        ],
+        nantucket: [
+          {
+            key: "thu",
+            date: "Thu Jun 11",
+            title: "Arrival, rental car, rehearsal",
+            focus: "cape",
+            items: [
+              ["7:10a", "ATL departure."],
+              ["Morning", "Land BOS, pick up rental car, and drive toward Mashpee."],
+              ["Scenic option", "Use Sandwich or Woods Hole if there is enough slack before rehearsal dinner."],
+              ["Evening", "Rehearsal dinner is covered."]
+            ],
+            links: [
+              ["Airport -> Mashpee", "https://www.google.com/maps/dir/?api=1&origin=Boston+Logan+International+Airport&destination=Mashpee,+MA"]
+            ]
+          },
+          {
+            key: "fri",
+            date: "Fri Jun 12",
+            title: "Wedding day in Mashpee",
+            focus: "cape",
+            items: [
+              ["Morning", "Keep it local: South Cape Beach, Popponesset Raw Bar, or Naukabout."],
+              ["Midday", "Avoid ambitious driving before wedding logistics."],
+              ["Wedding", "Wedding and dinner are covered."]
+            ],
+            links: [
+              ["South Cape Beach", "https://www.google.com/maps/search/?api=1&query=South+Cape+Beach+State+Park"]
+            ]
+          },
+          {
+            key: "sat",
+            date: "Sat Jun 13",
+            title: "Nantucket day trip",
+            focus: "nantucket",
+            items: [
+              ["10:30a", "Target Hyannis ferry area for parking and boarding buffer."],
+              ["11:20a", "Hy-Line ferry to Nantucket; arrive around 12:20."],
+              ["Lunch", "Straight Wharf Fish for easy, Brant Point Grill for nicer harbor-view lunch."],
+              ["Afternoon", "Nantucket Town, Brant Point, optional Cisco shuttle/rideshare."],
+              ["7:00p", "Return ferry; expect Mashpee around 8:30 after docking and drive back."]
+            ],
+            links: [
+              ["Book Hy-Line", "https://hylinecruises.com/nantucket-ferry/"],
+              ["Straight Wharf Fish", "https://www.google.com/maps/search/?api=1&query=Straight+Wharf+Fish,+Nantucket,+MA"]
+            ]
+          },
+          {
+            key: "sun",
+            date: "Sun Jun 14",
+            title: "Outer Cape run",
+            focus: "boston",
+            items: [
+              ["9:30a", "Leave Mashpee if doing the full Race Point / Provincetown version."],
+              ["Late morning", "Optional Cahoon Hollow / Wellfleet stop on the way up."],
+              ["Midday", "Provincetown, Province Lands, Race Point Beach, or Art's Dune Tours."],
+              ["Afternoon", "Leave for Boston with a serious traffic cushion."],
+              ["Dinner", "Boston dinner is covered."]
+            ],
+            links: [
+              ["Race Point", "https://www.google.com/maps/search/?api=1&query=Race+Point+Beach,+Provincetown,+MA"],
+              ["Provincetown route", "https://www.google.com/maps/dir/?api=1&origin=Mashpee,+MA&destination=Provincetown,+MA"]
+            ]
+          },
+          {
+            key: "mon",
+            date: "Mon Jun 15",
+            title: "6am airport return",
+            focus: "boston",
+            items: [
+              ["Early", "Airport logistics."],
+              ["6:50a", "BOS departure."],
+              ["9:33a", "ATL arrival."]
+            ],
+            links: [
+              ["Logan airport", "https://www.google.com/maps/search/?api=1&query=Boston+Logan+International+Airport"]
+            ]
+          }
+        ]
+      };
+
+      let map;
+      let markers = [];
+      let polylines = [];
+
+      function qs(selector) {
+        return document.querySelector(selector);
+      }
+
+      function markerIcon(location) {
+        return L.divIcon({
+          className: "",
+          html: '<div class="marker ' + location.kind + '">' + location.label + '</div>',
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+          popupAnchor: [0, -15]
+        });
+      }
+
+      function popup(location) {
+        return '<div class="popup-title">' + location.name + '</div><div class="popup-meta">' + location.note + '</div>';
+      }
+
+      function ferryCurve(from, to) {
+        const points = [];
+        for (let i = 0; i <= 32; i += 1) {
+          const t = i / 32;
+          const lat = from[0] + (to[0] - from[0]) * t;
+          const lng = from[1] + (to[1] - from[1]) * t;
+          const bend = Math.sin(Math.PI * t) * 0.12;
+          points.push([lat - bend, lng + bend * 0.28]);
+        }
+        return points;
+      }
+
+      function clearMap() {
+        markers.forEach((marker) => marker.remove());
+        polylines.forEach((line) => line.remove());
+        markers = [];
+        polylines = [];
+      }
+
+      function addLine(points, color, dashArray) {
+        const line = L.polyline(points, {
+          color,
+          weight: 4,
+          opacity: 0.9,
+          dashArray: dashArray || null
+        }).addTo(map);
+        polylines.push(line);
+      }
+
+      function activeAirport() {
+        return locations[state.airport];
+      }
+
+      function mapLocations() {
+        return [
+          activeAirport(),
+          locations.hyannisHotel,
+          locations.hyline,
+          locations.steamship,
+          locations.mashpee,
+          locations.southCape,
+          locations.knob,
+          locations.woodsHole,
+          locations.sandwich,
+          locations.provincetown,
+          locations.racePoint,
+          locations.nantucketWharf,
+          locations.brantPoint,
+          locations.cisco,
+          locations.bostonHotel
+        ];
+      }
+
+      function renderMap() {
+        if (!map || !window.L) {
+          return;
+        }
+
+        clearMap();
+        mapLocations().forEach((loc) => {
+          const marker = L.marker(loc.coords, { icon: markerIcon(loc) })
+            .addTo(map)
+            .bindPopup(popup(loc));
+          markers.push(marker);
+        });
+
+        addLine([activeAirport().coords, locations.sandwich.coords, locations.mashpee.coords, locations.hyline.coords], "#486f96");
+        addLine([locations.mashpee.coords, locations.woodsHole.coords, locations.knob.coords, locations.mashpee.coords], "#24766d", "5 6");
+        addLine([locations.mashpee.coords, locations.provincetown.coords, locations.racePoint.coords, locations.bostonHotel.coords], "#c8583d", "6 7");
+        addLine(ferryCurve(locations.hyline.coords, locations.nantucketWharf.coords), "#b78219", "8 8");
+        addLine([locations.nantucketWharf.coords, locations.brantPoint.coords, locations.nantucketWharf.coords, locations.cisco.coords, locations.nantucketWharf.coords], "#24766d", "4 7");
+        addLine([locations.mashpee.coords, locations.sandwich.coords, locations.bostonHotel.coords], "#4b5963");
+
+        focusMap(state.focus);
+      }
+
+      function focusMap(focus) {
+        state.focus = focus;
+        document.querySelectorAll("[data-focus]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.focus === focus);
+        });
+
+        if (!map || !window.L) {
+          return;
+        }
+
+        const views = {
+          all: { center: [41.77, -70.72], zoom: 8 },
+          cape: { center: [41.63, -70.49], zoom: 10 },
+          nantucket: { center: [41.275, -70.105], zoom: 11 },
+          boston: { center: [42.02, -70.72], zoom: 8 }
+        };
+
+        map.invalidateSize();
+        const view = views[focus] || views.all;
+        map.setView(view.center, view.zoom, { animate: false });
+      }
+
+      function renderTimeline() {
+        const timeline = qs("#timeline");
+        timeline.innerHTML = "";
+        timelinePlans[state.plan].forEach((day, index) => {
+          const card = document.createElement("article");
+          card.className = "day-card" + (index === 0 ? " active" : "");
+          card.dataset.day = day.key;
+
+          const items = day.items.map((item) => {
+            return '<li><span class="time">' + item[0] + '</span><span>' + item[1] + '</span></li>';
+          }).join("");
+
+          const links = day.links.map((link) => {
+            let href = link[1];
+            if (link[0] === "Airport -> Mashpee") {
+              href = "https://www.google.com/maps/dir/?api=1&origin=" + airportMapOrigins[state.airport] + "&destination=Mashpee,+MA";
+            }
+            return '<a class="link-button" href="' + href + '" target="_blank" rel="noreferrer"><i data-lucide="map"></i>' + link[0] + '</a>';
+          }).join("");
+
+          card.innerHTML = [
+            '<div class="day-top">',
+            '<div><h3>' + day.title + '</h3></div>',
+            '<span class="date-pill">' + day.date + '</span>',
+            '</div>',
+            '<ul class="day-list">' + items + '</ul>',
+            '<div class="links-row">' + links + '</div>'
+          ].join("");
+
+          card.addEventListener("click", () => {
+            document.querySelectorAll(".day-card").forEach((other) => other.classList.remove("active"));
+            card.classList.add("active");
+            focusMap(day.focus);
+          });
+
+          timeline.appendChild(card);
+        });
+
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }
+
+      function renderPlan() {
+        const rec = qs("#recommendation");
+        const badge = qs("#plan-badge");
+        const hyannisOption = qs("#hyannis-option");
+        const nantucketOption = qs("#nantucket-option");
+
+        document.querySelectorAll("[data-plan]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.plan === state.plan);
+        });
+
+        if (state.plan === "hyannis") {
+          rec.innerHTML = "<strong>Use Saturday for Nantucket and Sunday for the scenic return.</strong> Keep the island day walkable, then use Sunday for South Cape Beach, The Knob, Woods Hole, Sandwich, or a clean Boston arrival before dinner.";
+          badge.textContent = "Easy scenic";
+          hyannisOption.classList.add("recommended");
+          nantucketOption.classList.remove("recommended");
+        } else {
+          rec.innerHTML = "<strong>Provincetown and Race Point are the full-send version.</strong> It is the coolest end-of-Cape scenery, but it only works if Sunday starts early and the return to Boston gets a real traffic cushion.";
+          badge.textContent = "Outer Cape";
+          hyannisOption.classList.remove("recommended");
+          nantucketOption.classList.add("recommended");
+        }
+
+        renderTimeline();
+      }
+
+      function renderAirport() {
+        qs("#airport-copy").textContent = airportCopy[state.airport];
+        renderTimeline();
+        renderMap();
+      }
+
+      function initMap() {
+        if (!window.L) {
+          qs("#map-fallback").style.display = "grid";
+          return;
+        }
+
+        qs("#map-fallback").style.display = "none";
+        map = L.map("map", {
+          zoomControl: true,
+          scrollWheelZoom: true
+        });
+
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        renderMap();
+      }
+
+      function bindControls() {
+        document.querySelectorAll("[data-plan]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.plan = button.dataset.plan;
+            renderPlan();
+          });
+        });
+
+        document.querySelectorAll("[data-focus]").forEach((button) => {
+          button.addEventListener("click", () => focusMap(button.dataset.focus));
+        });
+
+        qs("#airport-select").addEventListener("change", (event) => {
+          state.airport = event.target.value;
+          renderAirport();
+        });
+      }
+
+      window.addEventListener("load", () => {
+        bindControls();
+        renderPlan();
+        initMap();
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
