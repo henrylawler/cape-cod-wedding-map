@@ -468,6 +468,84 @@
       font-size: 13px;
     }
 
+    .route-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .route-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffffb;
+      padding: 11px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .route-card.recommended {
+      border-color: var(--teal);
+      background: #f2faf7;
+    }
+
+    .route-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .route-pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--muted);
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .photo-card {
+      min-height: 170px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      display: grid;
+      align-items: end;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .photo-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.68));
+      z-index: -1;
+    }
+
+    .photo-copy {
+      color: #fff;
+      padding: 12px;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .photo-copy h3 {
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .photo-copy p {
+      margin: 0;
+      font-size: 13px;
+    }
+
     .badge {
       display: inline-flex;
       align-items: center;
@@ -594,7 +672,8 @@
 
       .segmented,
       .decision-grid,
-      .ferry-grid {
+      .ferry-grid,
+      .photo-grid {
         grid-template-columns: 1fr;
       }
 
@@ -732,10 +811,42 @@
               <h3>Provincetown / Race Point</h3>
               <ul>
                 <li>Coolest scenery: dunes, Race Point, Commercial Street.</li>
-                <li>Worth it only if you leave Mashpee before lunch.</li>
-                <li>Long return to Boston, especially with Sunday traffic.</li>
+                <li>Best as a morning-start route with lunch or drinks in Provincetown.</li>
+                <li>About 5h10 total drive time before stops across the full Mashpee -> P-town -> Boston loop.</li>
               </ul>
             </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>What it looks like</h2>
+          </div>
+          <div class="photo-grid">
+            <a class="photo-card" href="https://commons.wikimedia.org/wiki/Category:Race_Point_Beach" target="_blank" rel="noreferrer" style="background-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Springtime_sunset_on_Cape_Cod_-_Race_Point_(14054425580).jpg');">
+              <div class="photo-copy">
+                <h3>Race Point</h3>
+                <p>Outer Cape dunes, big Atlantic beach, end-of-the-map energy.</p>
+              </div>
+            </a>
+            <a class="photo-card" href="https://commons.wikimedia.org/wiki/File:SandwichBoardwalk.jpg" target="_blank" rel="noreferrer" style="background-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/SandwichBoardwalk.jpg');">
+              <div class="photo-copy">
+                <h3>Sandwich Boardwalk</h3>
+                <p>Easy Cape stop: marsh, boardwalk, canal lunch nearby.</p>
+              </div>
+            </a>
+            <a class="photo-card" href="https://commons.wikimedia.org/wiki/Category:Nobska_Light" target="_blank" rel="noreferrer" style="background-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Nobska_Lighthouse_1.jpg');">
+              <div class="photo-copy">
+                <h3>Woods Hole / Nobska</h3>
+                <p>Lighthouse, water, tighter roads, good short detour.</p>
+              </div>
+            </a>
+            <a class="photo-card" href="https://commons.wikimedia.org/wiki/Category:Boston_Harborwalk_in_the_Seaport_District" target="_blank" rel="noreferrer" style="background-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Boston_Harborwalk_Seaport_District_South_Boston_Waterfront.jpg');">
+              <div class="photo-copy">
+                <h3>Boston Harborwalk</h3>
+                <p>Waterfront walk, skyline views, easy pre-dinner time burn.</p>
+              </div>
+            </a>
           </div>
         </section>
 
@@ -827,14 +938,137 @@
 
         <section class="section">
           <div class="section-header">
-            <h2>Drive notes</h2>
+            <h2>Coffee + breakfast</h2>
+          </div>
+          <div class="route-stack">
+            <div class="route-card recommended">
+              <h3>Friday local: Coffee Bah or Cape Cod Coffee</h3>
+              <p class="muted">Closest easy morning: Popponesset Marketplace for Coffee Bah, or Mashpee Commons for Cape Cod Coffee.</p>
+              <div class="route-meta">
+                <span class="route-pill">Mashpee area</span>
+                <span class="route-pill">Good before wedding logistics</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://thecoffeebah.com/" target="_blank" rel="noreferrer"><i data-lucide="coffee"></i>Coffee Bah</a>
+                <a class="link-button" href="https://capecodcoffee.com/" target="_blank" rel="noreferrer"><i data-lucide="coffee"></i>Cape Cod Coffee</a>
+              </div>
+            </div>
+            <div class="route-card">
+              <h3>Sunday scenic: Pie in the Sky, Woods Hole</h3>
+              <p class="muted">House-roasted coffee, bakery, breakfast sandwiches, and a real village feel before The Knob / Nobska.</p>
+              <div class="route-meta">
+                <span class="route-pill">Mashpee -> Woods Hole: ~30 min</span>
+                <span class="route-pill">Open early</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.piecoffee.com/" target="_blank" rel="noreferrer"><i data-lucide="coffee"></i>Pie in the Sky</a>
+              </div>
+            </div>
+            <div class="route-card">
+              <h3>Boston afternoon: Daily Provisions or Gracenote</h3>
+              <p class="muted">Daily Provisions works for Seaport coffee/crullers/breakfast-sandwich energy; Gracenote is the espresso stop downtown.</p>
+              <div class="route-meta">
+                <span class="route-pill">Seaport walkable</span>
+                <span class="route-pill">Good pre-dinner reset</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.dailyprovisions.co/location/seaport/" target="_blank" rel="noreferrer"><i data-lucide="croissant"></i>Daily Provisions</a>
+                <a class="link-button" href="https://gracenotecoffee.com/pages/locations" target="_blank" rel="noreferrer"><i data-lucide="coffee"></i>Gracenote</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Route legs</h2>
+          </div>
+          <div class="route-stack">
+            <div class="route-card">
+              <h3>Thursday arrival route</h3>
+              <div class="time-grid">
+                <strong>BOS -> Sandwich</strong><span>~1h25</span>
+                <strong>Sandwich -> Mashpee</strong><span>~25 min</span>
+                <strong>Total drive</strong><span>~1h45 before stops</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Boston+Logan+International+Airport&destination=Sandwich+Boardwalk,+Sandwich,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>BOS -> Sandwich</a>
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Sandwich+Boardwalk,+Sandwich,+MA&destination=Mashpee,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>Sandwich -> Mashpee</a>
+              </div>
+            </div>
+            <div class="route-card recommended">
+              <h3>Sunday easy scenic route</h3>
+              <div class="time-grid">
+                <strong>Mashpee -> Woods Hole</strong><span>~30 min</span>
+                <strong>Woods Hole -> Sandwich</strong><span>~55 min</span>
+                <strong>Sandwich -> Boston</strong><span>~1h20</span>
+                <strong>Total drive</strong><span>~2h25 before stops</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Mashpee,+MA&destination=Woods+Hole,+Falmouth,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>Mashpee -> Woods Hole</a>
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Woods+Hole,+Falmouth,+MA&destination=Sandwich+Boardwalk,+Sandwich,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>Woods Hole -> Sandwich</a>
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Sandwich+Boardwalk,+Sandwich,+MA&destination=Boston+Seaport,+Boston,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>Sandwich -> Boston</a>
+              </div>
+            </div>
+            <div class="route-card">
+              <h3>Sunday Outer Cape route</h3>
+              <div class="time-grid">
+                <strong>Mashpee -> Provincetown</strong><span>~1h40</span>
+                <strong>Provincetown -> Race Point</strong><span>~15 min</span>
+                <strong>Race Point -> Boston</strong><span>~3h00</span>
+                <strong>Total drive</strong><span>~5h10 before stops</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Mashpee,+MA&destination=Provincetown,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>Mashpee -> P-town</a>
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Provincetown,+MA&destination=Race+Point+Beach,+Provincetown,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>P-town -> Race Point</a>
+                <a class="link-button" href="https://www.google.com/maps/dir/?api=1&origin=Race+Point+Beach,+Provincetown,+MA&destination=Boston+Seaport,+Boston,+MA&travelmode=driving" target="_blank" rel="noreferrer"><i data-lucide="map"></i>Race Point -> Boston</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Boston afternoon</h2>
+          </div>
+          <div class="route-stack">
+            <div class="route-card recommended">
+              <h3>Seaport / Harborwalk</h3>
+              <p class="muted">Best if dinner is downtown, Seaport, South End, or North End. Park once, walk Fan Pier / ICA / Harborwalk, get coffee, then head to dinner.</p>
+              <div class="route-meta">
+                <span class="route-pill">4-5 hr friendly</span>
+                <span class="route-pill">Waterfront views</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.bostonharbornow.org/what-we-do/explore/harborwalk/" target="_blank" rel="noreferrer"><i data-lucide="waves"></i>Harborwalk</a>
+                <a class="link-button" href="https://www.icaboston.org/" target="_blank" rel="noreferrer"><i data-lucide="building-2"></i>ICA</a>
+              </div>
+            </div>
+            <div class="route-card">
+              <h3>Gardner Museum + Public Garden</h3>
+              <p class="muted">Best classic-Boston option: a very memorable museum, then Public Garden / Newbury / Back Bay before dinner.</p>
+              <div class="route-meta">
+                <span class="route-pill">Gardner Sunday: 10-5</span>
+                <span class="route-pill">Seaport -> Gardner: ~15 min drive</span>
+              </div>
+              <div class="links-row">
+                <a class="link-button" href="https://www.gardnermuseum.org/visit" target="_blank" rel="noreferrer"><i data-lucide="palette"></i>Gardner</a>
+                <a class="link-button" href="https://content.boston.gov/parks/public-garden" target="_blank" rel="noreferrer"><i data-lucide="flower-2"></i>Public Garden</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Quick drive notes</h2>
           </div>
           <div class="time-grid">
-            <strong>BOS -> Mashpee</strong><span>About 1h40 direct before traffic.</span>
+            <strong>BOS -> Mashpee</strong><span>About 1h40 direct.</span>
             <strong>Mashpee -> Hyannis ferry</strong><span>About 25 minutes; give more buffer for parking.</span>
             <strong>Mashpee -> Woods Hole</strong><span>About 30 minutes; best short scenic detour.</span>
-            <strong>Mashpee -> Provincetown</strong><span>About 1h40 before traffic; only do it Sunday if leaving early.</span>
-            <strong>Provincetown -> Boston</strong><span>About 2h45 before Sunday traffic.</span>
+            <strong>Mashpee -> Provincetown</strong><span>About 1h40.</span>
+            <strong>Provincetown -> Boston</strong><span>About 2h45.</span>
           </div>
         </section>
 
@@ -856,14 +1090,16 @@
           </div>
           <ul class="source-list">
             <li><a href="https://www.zola.com/wedding/austinandkellee" target="_blank" rel="noreferrer">Zola home page</a> for wedding date and Mashpee location.</li>
-            <li><a href="https://www.zola.com/wedding/austinandkellee/travel" target="_blank" rel="noreferrer">Zola travel page</a> for hotel blocks, Hyannis addresses, airport guidance, and the 15-minute venue note.</li>
             <li><a href="https://hylinecruises.com/nantucket-ferry/" target="_blank" rel="noreferrer">Hy-Line Nantucket ferry</a> and <a href="https://hylinecruises.com/wp-content/uploads/2026/02/Nantucket-v2.pdf" target="_blank" rel="noreferrer">2026 schedule PDF</a> for ferry timing.</li>
             <li><a href="https://www.steamshipauthority.com/schedules" target="_blank" rel="noreferrer">Steamship Authority schedules</a> for high-speed passenger backup.</li>
             <li><a href="https://www.hylinecruises.com/parking/" target="_blank" rel="noreferrer">Hy-Line parking</a> for 220 Ocean Street and arrival/parking guidance.</li>
             <li><a href="https://www.ciscobrewers.com/nantucket" target="_blank" rel="noreferrer">Cisco Brewers Nantucket</a> for Saturday/Sunday shuttle and island stop option.</li>
             <li><a href="https://www.straightwharffish.com/" target="_blank" rel="noreferrer">Straight Wharf Fish</a>, <a href="https://www.whiteelephantnantucket.com/dining/brant-point-grill" target="_blank" rel="noreferrer">Brant Point Grill</a>, and <a href="https://www.lemonpressnantucket.com/location/lemon-press/" target="_blank" rel="noreferrer">Lemon Press</a> for Nantucket food timing.</li>
-            <li><a href="https://www.mass.gov/locations/south-cape-beach-state-park" target="_blank" rel="noreferrer">South Cape Beach</a>, <a href="https://www.savebuzzardsbay.org/places-to-go/the-knob" target="_blank" rel="noreferrer">The Knob</a>, and <a href="https://www.nps.gov/places/race-point-beach.htm" target="_blank" rel="noreferrer">Race Point Beach</a> for scenic stops.</li>
+            <li><a href="https://thecoffeebah.com/" target="_blank" rel="noreferrer">Coffee Bah</a>, <a href="https://capecodcoffee.com/" target="_blank" rel="noreferrer">Cape Cod Coffee</a>, <a href="https://www.piecoffee.com/" target="_blank" rel="noreferrer">Pie in the Sky</a>, <a href="https://www.dailyprovisions.co/location/seaport/" target="_blank" rel="noreferrer">Daily Provisions</a>, and <a href="https://gracenotecoffee.com/pages/locations" target="_blank" rel="noreferrer">Gracenote Coffee</a> for coffee/breakfast stops.</li>
+            <li><a href="https://www.mass.gov/locations/south-cape-beach-state-park" target="_blank" rel="noreferrer">South Cape Beach</a>, <a href="https://www.savebuzzardsbay.org/places-to-go/the-knob" target="_blank" rel="noreferrer">The Knob</a>, <a href="https://www.nps.gov/places/race-point-beach.htm" target="_blank" rel="noreferrer">Race Point Beach</a>, and <a href="https://www.nps.gov/caco/learn/historyculture/dune-shacks-of-peaked-hill-bars-historic-district.htm" target="_blank" rel="noreferrer">Dune Shacks</a> for scenic context.</li>
             <li><a href="https://www.fvcapecod.com/infospring25" target="_blank" rel="noreferrer">Fishermen's View</a>, <a href="https://treehousebrew.com/visiting-sandwich" target="_blank" rel="noreferrer">Tree House Sandwich</a>, and <a href="https://www.naukabout.com/brewery" target="_blank" rel="noreferrer">Naukabout Brewery</a> for Cape food/drink stops.</li>
+            <li><a href="https://www.bostonharbornow.org/what-we-do/explore/harborwalk/" target="_blank" rel="noreferrer">Boston Harborwalk</a>, <a href="https://www.icaboston.org/" target="_blank" rel="noreferrer">ICA Boston</a>, <a href="https://www.gardnermuseum.org/visit" target="_blank" rel="noreferrer">Gardner Museum</a>, and <a href="https://content.boston.gov/parks/public-garden" target="_blank" rel="noreferrer">Boston Public Garden</a> for Sunday afternoon Boston options.</li>
+            <li>Highlight photos are linked to Wikimedia Commons source/category pages from each image card.</li>
           </ul>
         </section>
       </aside>
@@ -907,7 +1143,7 @@
           name: "Hyannis Harbor area",
           coords: [41.6497, -70.2806],
           kind: "cape",
-          note: "Ferry, parking, and harbor food options. About 25 minutes from Mashpee before traffic."
+          note: "Ferry, parking, and harbor food options. About 25 minutes from Mashpee."
         },
         hyline: {
           label: "HL",
@@ -991,14 +1227,42 @@
           name: "Race Point Beach",
           coords: [42.0797, -70.2433],
           kind: "cape",
-          note: "Northern tip of Cape Cod. Destination/view, not a place for speed."
+          note: "Northern tip of Cape Cod with big Atlantic beach and dune views."
+        },
+        dailyProvisions: {
+          label: "DP",
+          name: "Daily Provisions Seaport",
+          coords: [42.3483, -71.0415],
+          kind: "boston",
+          note: "Coffee, crullers, breakfast sandwiches, and easy Seaport reset."
+        },
+        gracenote: {
+          label: "GN",
+          name: "Gracenote Coffee",
+          coords: [42.3519, -71.0582],
+          kind: "boston",
+          note: "Small downtown espresso stop near Leather District / South Station."
+        },
+        gardner: {
+          label: "GM",
+          name: "Isabella Stewart Gardner Museum",
+          coords: [42.3380, -71.0999],
+          kind: "boston",
+          note: "Classic Boston afternoon option. Sunday hours are 10-5."
+        },
+        publicGarden: {
+          label: "PG",
+          name: "Boston Public Garden",
+          coords: [42.3540, -71.0699],
+          kind: "boston",
+          note: "Classic walk; Swan Boats operate seasonally, weather permitting."
         },
         bostonHotel: {
-          label: "B",
-          name: "Boston dinner / exit zone",
-          coords: [42.3663, -71.0217],
+          label: "SP",
+          name: "Boston Seaport / Harborwalk",
+          coords: [42.3496, -71.0428],
           kind: "boston",
-          note: "Sunday dinner is covered in Boston. Monday flight is early from BOS."
+          note: "Waterfront walk, Fan Pier, ICA, coffee, and easy pre-dinner time."
         }
       };
 
@@ -1073,7 +1337,7 @@
             items: [
               ["Morning", "South Cape Beach, The Knob, or Woods Hole if the weather is good."],
               ["Lunch", "Sandwich Boardwalk + Fishermen's View or Tree House Sandwich."],
-              ["Afternoon", "Drive to Boston with bridge and Sunday traffic cushion."],
+              ["Afternoon", "Drive to Boston; route cards show the leg timing."],
               ["Dinner", "Boston dinner is covered."]
             ],
             links: [
@@ -1152,7 +1416,7 @@
               ["9:30a", "Leave Mashpee if doing the full Race Point / Provincetown version."],
               ["Late morning", "Optional Cahoon Hollow / Wellfleet stop on the way up."],
               ["Midday", "Provincetown, Province Lands, Race Point Beach, or Art's Dune Tours."],
-              ["Afternoon", "Leave for Boston with a serious traffic cushion."],
+              ["Afternoon", "Leave for Boston with the route-card timing in mind."],
               ["Dinner", "Boston dinner is covered."]
             ],
             links: [
@@ -1248,8 +1512,28 @@
           locations.nantucketWharf,
           locations.brantPoint,
           locations.cisco,
+          locations.dailyProvisions,
+          locations.gracenote,
+          locations.gardner,
+          locations.publicGarden,
           locations.bostonHotel
         ];
+      }
+
+      function addRoute(points, color, dashArray) {
+        const coords = points.map((point) => point[1] + "," + point[0]).join(";");
+        const fallback = () => addLine(points, color, dashArray);
+        fetch("https://router.project-osrm.org/route/v1/driving/" + coords + "?overview=full&geometries=geojson")
+          .then((response) => response.ok ? response.json() : Promise.reject(new Error("route failed")))
+          .then((data) => {
+            const routeCoords = data.routes && data.routes[0] && data.routes[0].geometry && data.routes[0].geometry.coordinates;
+            if (!routeCoords) {
+              fallback();
+              return;
+            }
+            addLine(routeCoords.map((coord) => [coord[1], coord[0]]), color, dashArray);
+          })
+          .catch(fallback);
       }
 
       function renderMap() {
@@ -1265,12 +1549,13 @@
           markers.push(marker);
         });
 
-        addLine([activeAirport().coords, locations.sandwich.coords, locations.mashpee.coords, locations.hyline.coords], "#486f96");
-        addLine([locations.mashpee.coords, locations.woodsHole.coords, locations.knob.coords, locations.mashpee.coords], "#24766d", "5 6");
-        addLine([locations.mashpee.coords, locations.provincetown.coords, locations.racePoint.coords, locations.bostonHotel.coords], "#c8583d", "6 7");
+        addRoute([activeAirport().coords, locations.sandwich.coords, locations.mashpee.coords], "#486f96");
+        addRoute([locations.mashpee.coords, locations.hyline.coords], "#b78219", "5 6");
+        addRoute([locations.mashpee.coords, locations.woodsHole.coords, locations.sandwich.coords, locations.bostonHotel.coords], "#24766d");
+        addRoute([locations.mashpee.coords, locations.provincetown.coords, locations.racePoint.coords, locations.bostonHotel.coords], "#c8583d", "6 7");
+        addRoute([locations.bostonHotel.coords, locations.gardner.coords, locations.publicGarden.coords], "#4b5963", "5 8");
         addLine(ferryCurve(locations.hyline.coords, locations.nantucketWharf.coords), "#b78219", "8 8");
         addLine([locations.nantucketWharf.coords, locations.brantPoint.coords, locations.nantucketWharf.coords, locations.cisco.coords, locations.nantucketWharf.coords], "#24766d", "4 7");
-        addLine([locations.mashpee.coords, locations.sandwich.coords, locations.bostonHotel.coords], "#4b5963");
 
         focusMap(state.focus);
       }
@@ -1356,7 +1641,7 @@
           hyannisOption.classList.add("recommended");
           nantucketOption.classList.remove("recommended");
         } else {
-          rec.innerHTML = "<strong>Provincetown and Race Point are the full-send version.</strong> It is the coolest end-of-Cape scenery, but it only works if Sunday starts early and the return to Boston gets a real traffic cushion.";
+          rec.innerHTML = "<strong>Provincetown and Race Point are the full-send version.</strong> It is the coolest end-of-Cape scenery: dunes, Commercial Street, Race Point, then Boston dinner.";
           badge.textContent = "Outer Cape";
           hyannisOption.classList.remove("recommended");
           nantucketOption.classList.add("recommended");
